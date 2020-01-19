@@ -8,11 +8,23 @@ Financial records can be created as either an asset or a liability, and the user
 - go1.13.x (Will most likely work with go1.11 or 1.12 (Needs module support), but testing has not been done with older versions)
 - docker-compose
 
+## Setup
+- Create a file called .env with the following contents
+```
+AL_DB_HOST=localhost
+AL_DB_PORT=5432
+AL_DB_NAME=postgres
+AL_DB_USER=postgres
+AL_DB_PASSWORD=postgres
+AL_DB_SSL_MODE=disable
+AL_DEBUG_MODE=1
+```
+
 ## Starting the server
 - Start the database using ```docker-compose up -d```
+- Run the migrations using ```make db-migrate```
 - Start the server using ```make run```
 - Server will listen on ```localhost:8080``` by default
-
 
 ## Routes
 
@@ -60,16 +72,21 @@ Financial records can be created as either an asset or a liability, and the user
   - limit=[int]
 - Response:
     ```
-    [
-        {
-            id: string
-            type: RECORD_TYPE
-            name: string
-            balance: float
-            created_at: timestamp
-            updated_at: timestamp
-        }
-    ]
+    {
+        records: [
+            {
+                id: string
+                type: RECORD_TYPE
+                name: string
+                balance: float
+                created_at: timestamp
+                updated_at: timestamp
+            }
+        ],
+        asset_total: int
+        liability_total: int
+        net_worth: int
+    }
     ```
 
 ### Create New Record
