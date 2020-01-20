@@ -1,8 +1,13 @@
 package finances
 
 import (
+	"assets-liabilities/entities"
+	"assets-liabilities/errors"
+	"assets-liabilities/models/record"
 	"assets-liabilities/server/routes"
+	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
 // Router manages routes related to authentication of user objects
@@ -24,11 +29,74 @@ func (r Router) List() routes.Routes {
 }
 
 func listRecords(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("List Records"))
+	limitStr := r.URL.Query().Get("limit")
+	offsetStr := r.URL.Query().Get("offset")
+
+	var limit *int
+	var offset *int
+
+	if l, err := strconv.Atoi(limitStr); err == nil {
+		limit = &l
+	}
+
+	if o, err := strconv.Atoi(offsetStr); err == nil {
+		offset = &o
+	}
+
+	rt := r.URL.Query().Get("type")
+
+	var recordType entities.RecordType
+	if rt == string(entities.Asset) {
+		recordType = entities.Asset
+	} else if rt == string(entities.Liability) {
+		recordType = entities.Liability
+	}
+
+	ctx := r.Context()
+
+	records, err := record.CtxModel(ctx).List(ctx, &entities.Record{
+		Type: recordType,
+	}, &entities.QueryParams{
+		Limit:  limit,
+		Offset: offset,
+	})
+
+	if err != nil {
+		routes.RespondWithError(w, errors.Error(err))
+	}
+
+	responseJSON, err := json.Marshal(&records)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	routes.Respond(w, http.StatusOK, responseJSON)
 }
 
 func createRecord(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Create Record"))
+	ctx := r.Context()
+	decoder := json.NewDecoder(r.Body)
+
+	var data entities.Record
+	err := decoder.Decode(&data)
+
+	if err != nil {
+		routes.RespondWithError(w, errors.NewErrorWithCode(http.StatusUnprocessableEntity, err.Error()))
+		return
+	}
+
+	newRecord, err := record.CtxModel(ctx).Create(ctx, data)
+	if err != nil {
+		routes.RespondWithError(w, errors.Error(err))
+		return
+	}
+
+	responseJSON, err := json.Marshal(&newRecord)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	routes.Respond(w, http.StatusOK, responseJSON)
 }
 
 func getRecord(w http.ResponseWriter, r *http.Request) {

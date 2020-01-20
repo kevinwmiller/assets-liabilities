@@ -12,7 +12,7 @@ type ErrorWithCode struct {
 
 // Error prints the error message as a string
 func (e ErrorWithCode) Error() string {
-	return fmt.Sprintf("Error [%d]: %s", e.Code, e.Message)
+	return fmt.Sprintf("%s", e.Message)
 }
 
 // NewErrorWithCode creates a new ErrorWithCode

@@ -49,6 +49,8 @@ func createRecordsTable(tx *sql.Tx) error {
 			type "record_type" NOT NULL,
 			name varchar(255) NOT NULL,
 			balance decimal(19, 4) NOT NULL,
+			"created_at" timestamp with time zone NOT NULL DEFAULT NOW(),
+			"updated_at" timestamp with time zone NOT NULL DEFAULT NOW(),
 			user_id uuid REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
 			PRIMARY KEY(id)
 			);

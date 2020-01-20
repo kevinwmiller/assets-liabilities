@@ -46,6 +46,7 @@ func New(ctx context.Context) *Server {
 	s.bindRouter(ctx, &finances.Router{})
 
 	cfg := config.Config(ctx)
+
 	s.server = &http.Server{
 		Handler:      s.router,
 		Addr:         fmt.Sprintf("%s:%d", cfg.Address, cfg.Port),

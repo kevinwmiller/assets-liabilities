@@ -70,6 +70,8 @@ AL_DEBUG_MODE=1
 - URL Parameters:
   - offset=[int]
   - limit=[int]
+    - Max = 500
+    - If provided limit is > 500, the limit will be set to 500
 - Response:
     ```
     {

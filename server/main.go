@@ -14,6 +14,10 @@ import (
 
 	"assets-liabilities/config"
 	"assets-liabilities/logging"
+	"assets-liabilities/models/record"
+	"assets-liabilities/models/user"
+	recordRepository "assets-liabilities/repositories/record"
+	userRepository "assets-liabilities/repositories/user"
 	"assets-liabilities/server"
 )
 
@@ -55,6 +59,11 @@ func main() {
 
 	ctx = context.WithValue(ctx, config.Ctx{}, cfg)
 	ctx = context.WithValue(ctx, logging.Ctx{}, logger)
+
+	// Could probably organize the repositories a bit more efficiently though I suppose it isn't too bad to
+	// specify one for each type. I'd rather have a specific repository for each entity instead of one generic one
+	ctx = record.UseModel(ctx, record.New(recordRepository.NewPersistedRepository(db)))
+	ctx = user.UseModel(ctx, user.New(userRepository.NewPersistedRepository(db)))
 
 	logger.Info("Creating server\n")
 	s := server.New(ctx)

@@ -6,6 +6,8 @@ import (
 	"net"
 	"net/http"
 
+	"github.com/teivah/onecontext"
+
 	"assets-liabilities/logging"
 
 	"github.com/gorilla/mux"
@@ -15,7 +17,8 @@ import (
 func AddContext(ctx context.Context) mux.MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			r.WithContext(ctx)
+			mergedCtx, _ := onecontext.Merge(ctx, r.Context())
+			r = r.WithContext(mergedCtx)
 			next.ServeHTTP(w, r)
 		})
 	}

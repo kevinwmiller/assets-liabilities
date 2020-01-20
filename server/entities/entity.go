@@ -33,3 +33,8 @@ type QueryParams struct {
 	Limit  *int
 	Offset *int
 }
+
+const (
+	// MaxLimit is the maximum limit that can be specified per query requests
+	MaxLimit = 1000
+)

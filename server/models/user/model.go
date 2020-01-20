@@ -6,6 +6,9 @@ import (
 	"context"
 )
 
+// Ctx is the context type for the user model
+type Ctx struct{}
+
 // Model contains the business logic for all user related actions
 type Model struct {
 	r user.Repository
@@ -16,6 +19,20 @@ func New(r user.Repository) *Model {
 	return &Model{
 		r,
 	}
+}
+
+// CtxModel returns the record model from the given context
+func CtxModel(ctx context.Context) *Model {
+	m, ok := ctx.Value(Ctx{}).(*Model)
+	if !ok {
+		panic("Error: Record model not set in context")
+	}
+	return m
+}
+
+// UseModel adds an instance of the record model to the given context
+func UseModel(ctx context.Context, model *Model) context.Context {
+	return context.WithValue(ctx, Ctx{}, model)
 }
 
 // FindByID returns the user matching the given id

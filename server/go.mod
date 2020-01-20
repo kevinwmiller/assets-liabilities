@@ -15,6 +15,7 @@ require (
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/viper v1.6.1
-	github.com/stretchr/testify v1.2.2
+	github.com/stretchr/testify v1.3.0
+	github.com/teivah/onecontext v0.0.0-20190805212053-7a1893e577e7
 	golang.org/x/crypto v0.0.0-20191205180655-e7c4368fe9dd
 )
