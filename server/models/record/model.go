@@ -44,10 +44,10 @@ func (m *Model) FindByID(ctx context.Context, id uint64) (entities.Record, error
 
 // Aggregate contains a list of financial records and metadata related to those records
 type Aggregate struct {
-	Records        []entities.Record
-	AssetTotal     float64 `json:"asset_total"`
-	LiabilityTotal float64 `json:"liability_total"`
-	NetWorth       float64 `json:"net_worth"`
+	Records        []entities.Record `json:"records"`
+	AssetTotal     float64           `json:"asset_total"`
+	LiabilityTotal float64           `json:"liability_total"`
+	NetWorth       float64           `json:"net_worth"`
 }
 
 // List returns all financial records matching the given search parameters
