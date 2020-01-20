@@ -1,6 +1,12 @@
 package entities
 
-import "github.com/microcosm-cc/bluemonday"
+import (
+	"assets-liabilities/errors"
+	"fmt"
+	"net/http"
+
+	"github.com/microcosm-cc/bluemonday"
+)
 
 // RecordType is used for an enumeration of record types
 type RecordType string
@@ -11,6 +17,16 @@ const (
 	// Liability should be used as a record's financial type if the record is something that must be paid off in the future
 	Liability RecordType = "Liability"
 )
+
+// ConvStrToRecordType converts a string to a record type
+func ConvStrToRecordType(str string) (RecordType, error) {
+	if str == string(Asset) {
+		return Asset, nil
+	} else if str == string(Liability) {
+		return Liability, nil
+	}
+	return "", errors.NewErrorWithCode(http.StatusUnprocessableEntity, fmt.Sprintf("Invalid record type %s specified", str))
+}
 
 // Record represents a financial record either an asset or a liability.
 type Record struct {

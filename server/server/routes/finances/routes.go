@@ -5,9 +5,9 @@ import (
 	"assets-liabilities/errors"
 	"assets-liabilities/models/record"
 	"assets-liabilities/server/routes"
+	"assets-liabilities/types"
 	"encoding/json"
 	"net/http"
-	"strconv"
 )
 
 // Router manages routes related to authentication of user objects
@@ -28,32 +28,20 @@ func (r Router) List() routes.Routes {
 	}
 }
 
+// URLParameters:
+//	limit: int [1-500]
+//	offset: int
+//	type: RecordType
 func listRecords(w http.ResponseWriter, r *http.Request) {
-	limitStr := r.URL.Query().Get("limit")
-	offsetStr := r.URL.Query().Get("offset")
-
-	var limit *int
-	var offset *int
-
-	if l, err := strconv.Atoi(limitStr); err == nil {
-		limit = &l
-	}
-
-	if o, err := strconv.Atoi(offsetStr); err == nil {
-		offset = &o
-	}
-
-	rt := r.URL.Query().Get("type")
-
-	var recordType entities.RecordType
-	if rt == string(entities.Asset) {
-		recordType = entities.Asset
-	} else if rt == string(entities.Liability) {
-		recordType = entities.Liability
+	limit := types.CreateIntFromString(r.URL.Query().Get("limit"))
+	offset := types.CreateIntFromString(r.URL.Query().Get("offset"))
+	recordType, err := entities.ConvStrToRecordType(r.URL.Query().Get("type"))
+	if r.URL.Query().Get("type") != "" && err != nil {
+		routes.RespondWithError(w, errors.Error(err))
+		return
 	}
 
 	ctx := r.Context()
-
 	records, err := record.CtxModel(ctx).List(ctx, &entities.Record{
 		Type: recordType,
 	}, &entities.QueryParams{
@@ -63,6 +51,7 @@ func listRecords(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		routes.RespondWithError(w, errors.Error(err))
+		return
 	}
 
 	responseJSON, err := json.Marshal(&records)
@@ -78,8 +67,8 @@ func createRecord(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
 	var data entities.Record
-	err := decoder.Decode(&data)
 
+	err := decoder.Decode(&data)
 	if err != nil {
 		routes.RespondWithError(w, errors.NewErrorWithCode(http.StatusUnprocessableEntity, err.Error()))
 		return

@@ -42,12 +42,39 @@ func (m *Model) FindByID(ctx context.Context, id string) (entities.Record, error
 	return m.r.FindByID(ctx, id)
 }
 
+// Aggregate contains a list of financial records and metadata related to those records
+type Aggregate struct {
+	Records        []entities.Record
+	AssetTotal     float64 `json:"asset_total"`
+	LiabilityTotal float64 `json:"liability_total"`
+	NetWorth       float64 `json:"net_worth"`
+}
+
 // List returns all financial records matching the given search parameters
-func (m *Model) List(ctx context.Context, where *entities.Record, params *entities.QueryParams) ([]entities.Record, error) {
+func (m *Model) List(ctx context.Context, where *entities.Record, params *entities.QueryParams) (*Aggregate, error) {
 	if params != nil && params.Limit != nil && *params.Limit > entities.MaxLimit {
 		*params.Limit = entities.MaxLimit
 	}
-	return m.r.List(ctx, where, params)
+
+	records, err := m.r.List(ctx, where, params)
+	if err != nil {
+		return nil, err
+	}
+
+	aggr := &Aggregate{
+		Records: records,
+	}
+
+	for _, r := range records {
+		if r.Type == entities.Asset {
+			aggr.AssetTotal += r.Balance
+		} else if r.Type == entities.Liability {
+			aggr.LiabilityTotal += r.Balance
+		}
+	}
+	aggr.NetWorth = aggr.AssetTotal - aggr.LiabilityTotal
+
+	return aggr, nil
 }
 
 // Create creates a new financial record
