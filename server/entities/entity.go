@@ -10,7 +10,7 @@ import (
 // Entity is a copy of the gorm.Model struct with the exception that ID is a sonyflake id type instead of a sequential int.
 // This struct also forces hard deletes
 type Entity struct {
-	ID        uint64    `gorm:"type:uint64;primary_key;"`
+	ID        uint64    `gorm:"type:numeric;primary_key;"`
 	CreatedAt time.Time `json:"createdAt" gorm:"column:created_at;default:null"`
 	UpdatedAt time.Time `json:"updatedAt" gorm:"column:updated_at;default:null"`
 }

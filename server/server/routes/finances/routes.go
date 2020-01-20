@@ -112,9 +112,51 @@ func getRecord(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateRecord(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Update Record"))
+	id := types.CreateIntFromString(mux.Vars(r)["id"])
+	if id == nil {
+		http.Error(w, "Invalid id", http.StatusUnprocessableEntity)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var data entities.Record
+	err := decoder.Decode(&data)
+	if err != nil {
+		routes.RespondWithError(w, errors.NewErrorWithCode(http.StatusUnprocessableEntity, err.Error()))
+		return
+	}
+
+	data.ID = uint64(*id)
+	ctx := r.Context()
+	record, err := record.CtxModel(ctx).Update(ctx, data)
+
+	if err != nil {
+		routes.RespondWithError(w, errors.Error(err))
+		return
+	}
+
+	responseJSON, err := json.Marshal(&record)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	routes.Respond(w, http.StatusOK, responseJSON)
+
 }
 
 func deleteRecord(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Delete Record"))
+	id := types.CreateIntFromString(mux.Vars(r)["id"])
+	if id == nil {
+		http.Error(w, "Invalid id", http.StatusUnprocessableEntity)
+		return
+	}
+	ctx := r.Context()
+	err := record.CtxModel(ctx).Delete(ctx, uint64(*id))
+
+	if err != nil {
+		routes.RespondWithError(w, errors.Error(err))
+		return
+	}
+
+	routes.Respond(w, http.StatusOK, []byte("{}"))
 }
