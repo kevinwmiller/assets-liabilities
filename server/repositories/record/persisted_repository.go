@@ -55,7 +55,7 @@ func (r *PersistedRepository) List(ctx context.Context, where *entities.Record, 
 	if params == nil {
 		params = &entities.QueryParams{}
 	}
-	result := r.db.Debug().Where(where).
+	result := r.db.Where(where).
 		// Gorm's Order function doesn't escape parameters
 		// Order(types.LoadString(params.OrderBy, "")).
 		Offset(types.LoadInt(params.Offset, -1)).

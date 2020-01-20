@@ -24,7 +24,7 @@ func (m *Model) FindByID(ctx context.Context, id string) (entities.Record, error
 }
 
 // List returns all financial records matching the given search parameters
-func (m *Model) List(ctx context.Context, where entities.SearchParams, params entities.QueryParams) ([]entities.Record, error) {
+func (m *Model) List(ctx context.Context, where *entities.Record, params *entities.QueryParams) ([]entities.Record, error) {
 	return m.r.List(ctx, where, params)
 }
 
