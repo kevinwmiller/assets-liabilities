@@ -8,6 +8,8 @@ import (
 	"assets-liabilities/types"
 	"encoding/json"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 // Router manages routes related to authentication of user objects
@@ -67,7 +69,6 @@ func createRecord(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 
 	var data entities.Record
-
 	err := decoder.Decode(&data)
 	if err != nil {
 		routes.RespondWithError(w, errors.NewErrorWithCode(http.StatusUnprocessableEntity, err.Error()))
@@ -89,7 +90,25 @@ func createRecord(w http.ResponseWriter, r *http.Request) {
 }
 
 func getRecord(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Get Record"))
+	id := types.CreateIntFromString(mux.Vars(r)["id"])
+	if id == nil {
+		http.Error(w, "Invalid id", http.StatusUnprocessableEntity)
+		return
+	}
+	ctx := r.Context()
+	record, err := record.CtxModel(ctx).FindByID(ctx, uint64(*id))
+
+	if err != nil {
+		routes.RespondWithError(w, errors.Error(err))
+		return
+	}
+
+	responseJSON, err := json.Marshal(&record)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	routes.Respond(w, http.StatusOK, responseJSON)
 }
 
 func updateRecord(w http.ResponseWriter, r *http.Request) {

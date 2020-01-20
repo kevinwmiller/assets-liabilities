@@ -38,7 +38,7 @@ func UseModel(ctx context.Context, model *Model) context.Context {
 }
 
 // FindByID returns the financial record matching the given id
-func (m *Model) FindByID(ctx context.Context, id string) (entities.Record, error) {
+func (m *Model) FindByID(ctx context.Context, id uint64) (entities.Record, error) {
 	return m.r.FindByID(ctx, id)
 }
 
@@ -65,6 +65,9 @@ func (m *Model) List(ctx context.Context, where *entities.Record, params *entiti
 		Records: records,
 	}
 
+	// This calculates the net worth and totals from the records returned from the current query instead
+	// Maybe we should add additional values for the total (Using every available asset. Could be calculated by the database)
+	// and additional values for just the "current set"?
 	for _, r := range records {
 		if r.Type == entities.Asset {
 			aggr.AssetTotal += r.Balance
@@ -93,6 +96,6 @@ func (m *Model) Update(ctx context.Context, data entities.Record) (entities.Reco
 }
 
 // Delete deletes the record matching the given id
-func (m *Model) Delete(ctx context.Context, id string) error {
+func (m *Model) Delete(ctx context.Context, id uint64) error {
 	return m.r.Delete(ctx, id)
 }

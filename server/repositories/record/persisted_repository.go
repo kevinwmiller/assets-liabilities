@@ -9,8 +9,6 @@ import (
 	"fmt"
 	"net/http"
 
-	uuid "github.com/satori/go.uuid"
-
 	"github.com/jinzhu/gorm"
 )
 
@@ -27,17 +25,13 @@ func NewPersistedRepository(db *gorm.DB) *PersistedRepository {
 }
 
 // FindByID fetches the financial record from the database that matches the given id
-func (r *PersistedRepository) FindByID(ctx context.Context, id string) (entities.Record, error) {
+func (r *PersistedRepository) FindByID(ctx context.Context, id uint64) (entities.Record, error) {
 	record := entities.Record{}
-	recordID := uuid.FromStringOrNil(id)
-	if recordID == uuid.Nil {
-		return record, errors.NewErrorWithCode(http.StatusUnprocessableEntity, fmt.Sprintf("Invalid uuid %s provided", id))
-	}
 
-	result := r.db.Where("id = ?", recordID).Find(&record)
+	result := r.db.Where("id = ?", id).Find(&record)
 	if result.Error != nil {
 		if result.Error.Error() == "record not found" {
-			return record, errors.NewErrorWithCode(http.StatusNotFound, fmt.Sprintf("No record found with id %s", id))
+			return record, errors.NewErrorWithCode(http.StatusNotFound, fmt.Sprintf("No record found with id %d", id))
 		}
 		return record, result.Error
 	}
@@ -78,14 +72,14 @@ func (r *PersistedRepository) Create(ctx context.Context, data entities.Record) 
 	}
 	// Looking up the newly created object because I have had issues in the past with gorm setting the createdAt and updatedAt times in an inconsistent format
 	// after creating a new object
-	newData, err := r.FindByID(ctx, data.ID.String())
+	newData, err := r.FindByID(ctx, data.ID)
 	return newData, err
 
 }
 
 // Update updates the given financial record if it exists
 func (r *PersistedRepository) Update(ctx context.Context, data entities.Record) (entities.Record, error) {
-	record, err := r.FindByID(ctx, data.ID.String())
+	record, err := r.FindByID(ctx, data.ID)
 	if err != nil {
 		return record, err
 	}
@@ -99,13 +93,13 @@ func (r *PersistedRepository) Update(ctx context.Context, data entities.Record) 
 		logging.Logger(ctx).Error(result.Error)
 		return record, errors.NewErrorWithCode(http.StatusInternalServerError, result.Error.Error())
 	}
-	newData, err := r.FindByID(ctx, data.ID.String())
+	newData, err := r.FindByID(ctx, data.ID)
 	return newData, err
 
 }
 
 // Delete deletes the financial record with the given ID from the database
-func (r *PersistedRepository) Delete(ctx context.Context, id string) error {
+func (r *PersistedRepository) Delete(ctx context.Context, id uint64) error {
 	record, err := r.FindByID(ctx, id)
 	if err != nil {
 		return err

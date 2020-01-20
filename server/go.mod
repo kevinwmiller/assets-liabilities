@@ -14,6 +14,8 @@ require (
 	github.com/pressly/goose v2.6.0+incompatible
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.4.2
+	github.com/sony/sonyflake v1.0.0
+	github.com/speps/go-hashids v2.0.0+incompatible
 	github.com/spf13/viper v1.6.1
 	github.com/stretchr/testify v1.3.0
 	github.com/teivah/onecontext v0.0.0-20190805212053-7a1893e577e7

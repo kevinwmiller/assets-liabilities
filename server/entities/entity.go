@@ -4,28 +4,35 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	uuid "github.com/satori/go.uuid"
+	"github.com/sony/sonyflake"
 )
 
-// UUID adds a column called ID and will set it to a new v4 uuid on creation
-type UUID struct {
-}
-
-// BeforeCreate will set a UUID rather than numeric ID.
-func (entity *UUID) BeforeCreate(scope *gorm.Scope) error {
-	return scope.SetColumn("ID", uuid.NewV4())
-}
-
-// Entity is a copy of the gorm.Model struct with the exception that ID is a uuid type instead of an int. This struct also forces hard deletes
+// Entity is a copy of the gorm.Model struct with the exception that ID is a sonyflake id type instead of a sequential int.
+// This struct also forces hard deletes
 type Entity struct {
-	ID        uuid.UUID `gorm:"type:uuid;primary_key;"`
+	ID        uint64    `gorm:"type:uint64;primary_key;"`
 	CreatedAt time.Time `json:"createdAt" gorm:"column:created_at;default:null"`
 	UpdatedAt time.Time `json:"updatedAt" gorm:"column:updated_at;default:null"`
 }
 
-// BeforeCreate will set a UUID rather than numeric ID.
+var sf *sonyflake.Sonyflake
+
+func init() {
+	var st sonyflake.Settings
+	sf = sonyflake.NewSonyflake(st)
+	if sf == nil {
+		panic("sonyflake not created")
+	}
+}
+
+// BeforeCreate will set a SonyFlake ID rather than a sequential ID.
 func (entity *Entity) BeforeCreate(scope *gorm.Scope) error {
-	return scope.SetColumn("ID", uuid.NewV4())
+	id, err := sf.NextID()
+	if err != nil {
+		// We have been running our app for 174 years
+		panic("Reset the sonyflake start date")
+	}
+	return scope.SetColumn("ID", id)
 }
 
 // QueryParams contain information for paginating and ordering a FindAll query

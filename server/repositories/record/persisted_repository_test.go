@@ -34,7 +34,7 @@ func TestPersistedRepository_FindByID(t *testing.T) {
 	}
 	type args struct {
 		ctx context.Context
-		id  string
+		id  uint64
 	}
 
 	db := initDB(t)
@@ -73,19 +73,19 @@ func TestPersistedRepository_FindByID(t *testing.T) {
 			},
 			args: args{
 				ctx: ctx,
-				id:  "5626e2fe-7298-4e1e-8dd4-442457a58b81",
+				id:  23132131,
 			},
 			want:    entities.Record{},
 			wantErr: true,
 		},
 		{
-			name: "Invalid UUID",
+			name: "Invalid ID",
 			fields: fields{
 				db: db,
 			},
 			args: args{
 				ctx: ctx,
-				id:  "12",
+				id:  12,
 			},
 			want:    entities.Record{},
 			wantErr: true,
@@ -97,7 +97,7 @@ func TestPersistedRepository_FindByID(t *testing.T) {
 			},
 			args: args{
 				ctx: ctx,
-				id:  asset1.ID.String(),
+				id:  asset1.ID,
 			},
 			want:    asset1,
 			wantErr: false,
@@ -109,7 +109,7 @@ func TestPersistedRepository_FindByID(t *testing.T) {
 			},
 			args: args{
 				ctx: ctx,
-				id:  liability1.ID.String(),
+				id:  liability1.ID,
 			},
 			want:    liability1,
 			wantErr: false,
@@ -543,7 +543,7 @@ func TestPersistedRepository_Delete(t *testing.T) {
 	}
 	type args struct {
 		ctx context.Context
-		id  string
+		id  uint64
 	}
 
 	ctx := initCtx(t)
@@ -587,7 +587,7 @@ func TestPersistedRepository_Delete(t *testing.T) {
 	require.Nil(t, err)
 	assert.Len(t, beforeDelete, 4)
 
-	assert.Nil(t, r.Delete(ctx, asset2.ID.String()))
+	assert.Nil(t, r.Delete(ctx, asset2.ID))
 
 	afterDelete, err := r.List(ctx, nil, nil)
 	require.Nil(t, err)

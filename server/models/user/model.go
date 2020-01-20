@@ -36,7 +36,7 @@ func UseModel(ctx context.Context, model *Model) context.Context {
 }
 
 // FindByID returns the user matching the given id
-func (m *Model) FindByID(ctx context.Context, id string) (entities.User, error) {
+func (m *Model) FindByID(ctx context.Context, id uint64) (entities.User, error) {
 	return m.r.FindByID(ctx, id)
 }
 
@@ -67,6 +67,6 @@ func (m *Model) Update(ctx context.Context, data entities.User) (entities.User, 
 }
 
 // Delete deletes the user matching the given id
-func (m *Model) Delete(ctx context.Context, id string) error {
+func (m *Model) Delete(ctx context.Context, id uint64) error {
 	return m.r.Delete(ctx, id)
 }
