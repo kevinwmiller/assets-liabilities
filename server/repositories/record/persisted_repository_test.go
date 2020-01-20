@@ -34,7 +34,7 @@ func TestPersistedRepository_FindByID(t *testing.T) {
 	}
 	type args struct {
 		ctx context.Context
-		id  uint64
+		id  string
 	}
 
 	db := initDB(t)
@@ -543,7 +543,7 @@ func TestPersistedRepository_Delete(t *testing.T) {
 	}
 	type args struct {
 		ctx context.Context
-		id  uint64
+		id  string
 	}
 
 	ctx := initCtx(t)

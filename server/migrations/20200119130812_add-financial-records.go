@@ -23,7 +23,7 @@ func createRecordType(tx *sql.Tx) error {
 func createRecordsTable(tx *sql.Tx) error {
 	_, err := tx.Exec(`
 		CREATE TABLE records (
-			id numeric NOT NULL,
+			id varchar(255) NOT NULL,
 			type "record_type" NOT NULL,
 			name varchar(255) NOT NULL,
 			balance decimal(19, 4) NOT NULL,
@@ -50,10 +50,6 @@ func Up20200119130812(tx *sql.Tx) error {
 // Down20200119130812 drops the records and users table and the record_type enum
 func Down20200119130812(tx *sql.Tx) error {
 	if _, err := tx.Exec("DROP TABLE records;"); err != nil {
-		return err
-	}
-
-	if _, err := tx.Exec("DROP TABLE users;"); err != nil {
 		return err
 	}
 

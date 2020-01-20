@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -10,7 +11,7 @@ import (
 // Entity is a copy of the gorm.Model struct with the exception that ID is a sonyflake id type instead of a sequential int.
 // This struct also forces hard deletes
 type Entity struct {
-	ID        uint64    `gorm:"type:numeric;primary_key;"`
+	ID        string    `json:"id" gorm:"type:varchar(255);primary_key;"`
 	CreatedAt time.Time `json:"createdAt" gorm:"column:created_at;default:null"`
 	UpdatedAt time.Time `json:"updatedAt" gorm:"column:updated_at;default:null"`
 }
@@ -32,7 +33,7 @@ func (entity *Entity) BeforeCreate(scope *gorm.Scope) error {
 		// We have been running our app for 174 years
 		panic("Reset the sonyflake start date")
 	}
-	return scope.SetColumn("ID", id)
+	return scope.SetColumn("ID", strconv.FormatUint(id, 10))
 }
 
 // QueryParams contain information for paginating and ordering a FindAll query
