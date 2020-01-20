@@ -15,9 +15,7 @@ import (
 	"assets-liabilities/config"
 	"assets-liabilities/logging"
 	"assets-liabilities/models/record"
-	"assets-liabilities/models/user"
 	recordRepository "assets-liabilities/repositories/record"
-	userRepository "assets-liabilities/repositories/user"
 	"assets-liabilities/server"
 )
 
@@ -63,7 +61,10 @@ func main() {
 	// Could probably organize the repositories a bit more efficiently though I suppose it isn't too bad to
 	// specify one for each type. I'd rather have a specific repository for each entity instead of one generic one
 	ctx = record.UseModel(ctx, record.New(recordRepository.NewPersistedRepository(db)))
-	ctx = user.UseModel(ctx, user.New(userRepository.NewPersistedRepository(db)))
+
+	// Considered adding user management, but for such a small project, I'm not sure it's worth it
+	// Would use Argon2 for hashing, gorilla sessions and Pgstore for session management, usually use postmark for email
+	// ctx = user.UseModel(ctx, user.New(userRepository.NewPersistedRepository(db)))
 
 	logger.Info("Creating server\n")
 	s := server.New(ctx)

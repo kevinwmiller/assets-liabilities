@@ -20,21 +20,6 @@ func createRecordType(tx *sql.Tx) error {
 	return err
 }
 
-func createUsersTable(tx *sql.Tx) error {
-	_, err := tx.Exec(`
-		CREATE TABLE users (
-			id numeric NOT NULL,
-			username varchar(255) NOT NULL UNIQUE,
-			password varchar(255) NOT NULL,
-			full_name varchar(255) NOT NULL,
-			"created_at" timestamp with time zone NOT NULL DEFAULT NOW(),
-			"updated_at" timestamp with time zone NOT NULL DEFAULT NOW(),
-			PRIMARY KEY(id)
-			);
-	`)
-	return err
-}
-
 func createRecordsTable(tx *sql.Tx) error {
 	_, err := tx.Exec(`
 		CREATE TABLE records (
@@ -44,7 +29,6 @@ func createRecordsTable(tx *sql.Tx) error {
 			balance decimal(19, 4) NOT NULL,
 			"created_at" timestamp with time zone NOT NULL DEFAULT NOW(),
 			"updated_at" timestamp with time zone NOT NULL DEFAULT NOW(),
-			user_id numeric REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE,
 			PRIMARY KEY(id)
 			);
 	`)
@@ -54,10 +38,6 @@ func createRecordsTable(tx *sql.Tx) error {
 // Up20200119130812 creates the users and records tables
 func Up20200119130812(tx *sql.Tx) error {
 	if err := createRecordType(tx); err != nil {
-		return err
-	}
-
-	if err := createUsersTable(tx); err != nil {
 		return err
 	}
 

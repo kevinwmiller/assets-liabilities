@@ -8,7 +8,6 @@ import (
 	"assets-liabilities/config"
 	m "assets-liabilities/server/middlewares"
 	"assets-liabilities/server/routes"
-	"assets-liabilities/server/routes/auth"
 	"assets-liabilities/server/routes/finances"
 
 	"github.com/gorilla/handlers"
@@ -42,7 +41,8 @@ func New(ctx context.Context) *Server {
 	s.router.Use(handlers.CORS())
 
 	// Configure routes
-	s.bindRouter(ctx, &auth.Router{})
+	// Not adding auth routes here
+	// s.bindRouter(ctx, &auth.Router{})
 	s.bindRouter(ctx, &finances.Router{})
 
 	cfg := config.Config(ctx)
