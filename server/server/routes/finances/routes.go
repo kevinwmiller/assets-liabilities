@@ -90,13 +90,10 @@ func createRecord(w http.ResponseWriter, r *http.Request) {
 }
 
 func getRecord(w http.ResponseWriter, r *http.Request) {
-	id := types.CreateIntFromString(mux.Vars(r)["id"])
-	if id == nil {
-		http.Error(w, "Invalid id", http.StatusUnprocessableEntity)
-		return
-	}
+	id := mux.Vars(r)["id"]
+
 	ctx := r.Context()
-	record, err := record.CtxModel(ctx).FindByID(ctx, uint64(*id))
+	record, err := record.CtxModel(ctx).FindByID(ctx, id)
 
 	if err != nil {
 		routes.RespondWithError(w, errors.Error(err))
@@ -112,11 +109,7 @@ func getRecord(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateRecord(w http.ResponseWriter, r *http.Request) {
-	id := types.CreateIntFromString(mux.Vars(r)["id"])
-	if id == nil {
-		http.Error(w, "Invalid id", http.StatusUnprocessableEntity)
-		return
-	}
+	id := mux.Vars(r)["id"]
 
 	decoder := json.NewDecoder(r.Body)
 	var data entities.Record
@@ -126,7 +119,7 @@ func updateRecord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data.ID = uint64(*id)
+	data.ID = id
 	ctx := r.Context()
 	record, err := record.CtxModel(ctx).Update(ctx, data)
 
@@ -145,13 +138,10 @@ func updateRecord(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteRecord(w http.ResponseWriter, r *http.Request) {
-	id := types.CreateIntFromString(mux.Vars(r)["id"])
-	if id == nil {
-		http.Error(w, "Invalid id", http.StatusUnprocessableEntity)
-		return
-	}
+	id := mux.Vars(r)["id"]
+
 	ctx := r.Context()
-	err := record.CtxModel(ctx).Delete(ctx, uint64(*id))
+	err := record.CtxModel(ctx).Delete(ctx, id)
 
 	if err != nil {
 		routes.RespondWithError(w, errors.Error(err))

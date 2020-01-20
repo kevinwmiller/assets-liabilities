@@ -25,7 +25,7 @@ func NewPersistedRepository(db *gorm.DB) *PersistedRepository {
 }
 
 // FindByID fetches the financial record from the database that matches the given id
-func (r *PersistedRepository) FindByID(ctx context.Context, id uint64) (entities.Record, error) {
+func (r *PersistedRepository) FindByID(ctx context.Context, id string) (entities.Record, error) {
 	record := entities.Record{}
 
 	result := r.db.Where("id = ?", id).Find(&record)
@@ -99,7 +99,7 @@ func (r *PersistedRepository) Update(ctx context.Context, data entities.Record) 
 }
 
 // Delete deletes the financial record with the given ID from the database
-func (r *PersistedRepository) Delete(ctx context.Context, id uint64) error {
+func (r *PersistedRepository) Delete(ctx context.Context, id string) error {
 	record, err := r.FindByID(ctx, id)
 	if err != nil {
 		return err

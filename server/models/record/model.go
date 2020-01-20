@@ -38,7 +38,7 @@ func UseModel(ctx context.Context, model *Model) context.Context {
 }
 
 // FindByID returns the financial record matching the given id
-func (m *Model) FindByID(ctx context.Context, id uint64) (entities.Record, error) {
+func (m *Model) FindByID(ctx context.Context, id string) (entities.Record, error) {
 	return m.r.FindByID(ctx, id)
 }
 
@@ -96,6 +96,6 @@ func (m *Model) Update(ctx context.Context, data entities.Record) (entities.Reco
 }
 
 // Delete deletes the record matching the given id
-func (m *Model) Delete(ctx context.Context, id uint64) error {
+func (m *Model) Delete(ctx context.Context, id string) error {
 	return m.r.Delete(ctx, id)
 }
