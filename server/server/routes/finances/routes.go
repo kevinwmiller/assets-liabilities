@@ -7,6 +7,7 @@ import (
 	"assets-liabilities/server/routes"
 	"assets-liabilities/types"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -71,6 +72,7 @@ func createRecord(w http.ResponseWriter, r *http.Request) {
 	var data entities.Record
 	err := decoder.Decode(&data)
 	if err != nil {
+		fmt.Printf("Failed to decode %+v\n", err.Error())
 		routes.RespondWithError(w, errors.NewErrorWithCode(http.StatusUnprocessableEntity, err.Error()))
 		return
 	}
