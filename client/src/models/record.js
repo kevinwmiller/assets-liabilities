@@ -37,7 +37,6 @@ const record = {
             dispatch.record.setIsLoading(true);
             try {
                 let res = await axios.get("/finances/records");
-                console.log(res)
                 dispatch.record.setRecords(res.data);
             } catch (e) {
                 console.log(e)

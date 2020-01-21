@@ -60,7 +60,6 @@ export default function RecordTable({ records, createRecord, deleteRecord }) {
     // if (!records.records) {
     //     records.records = []
     // }
-    console.log(records.records)
     const columns = [
         // { title: 'id', field: 'id' },
         { title: 'Name', field: 'name' },
@@ -89,8 +88,6 @@ export default function RecordTable({ records, createRecord, deleteRecord }) {
                         new Promise(resolve => {
                             setTimeout(() => {
                                 resolve();
-                                console.log('Creating record')
-                                console.log(newData)
                                 newData.balance = parseFloat(newData.balance)
                                 createRecord(newData)
                             }, 600)
@@ -99,7 +96,6 @@ export default function RecordTable({ records, createRecord, deleteRecord }) {
                         new Promise(resolve => {
                             setTimeout(() => {
                                 resolve();
-                                console.log('Deleting', oldData)
                                 deleteRecord({ id: oldData.id })
                             }, 600)
                         }),

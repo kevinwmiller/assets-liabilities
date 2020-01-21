@@ -72,9 +72,9 @@ function App() {
       <header className="App-header">
         <Typography variant='h1'>Assets & Liabilities</Typography>
       </header>
-      <content className="mainContent">
+      <div className="mainContent">
         <RecordTableContainer />
-      </content>
+      </div>
     </div>
   );
 }
