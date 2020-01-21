@@ -1,18 +1,23 @@
-import { Paper } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import React from 'react';
 import { connect } from 'react-redux';
 import NetWorth from '../components/NetWorth';
 import RecordTable from '../components/RecordTable';
-
-
 class RecordTableContainer extends React.Component {
     componentDidMount() {
         this.props.fetchRecords()
     }
 
     render() {
+        if (!this.props.records.asset_total) {
+            this.props.records.asset_total = 0
+        }
+        if (!this.props.records.liability_total) {
+            this.props.records.liability_total = 0
+        }
+
         return (
-            <Paper style={{ width: "75%", margin: 'auto' }}>
+            <div style={{ maxWidth: "1000px", margin: 'auto' }}>
                 <NetWorth isLoading={this.props.isLoading} netWorth={this.props.records.net_worth} />
                 <RecordTable
                     records={this.props.records}
@@ -21,7 +26,15 @@ class RecordTableContainer extends React.Component {
                     createRecord={this.props.createRecord}
                     deleteRecord={this.props.deleteRecord}
                 />
-            </Paper>
+                <div>
+                    <Typography style={{ marginRight: '20px' }} variant='subtitle1' component='span'>
+                        Total Assets: ${this.props.records.asset_total.toFixed(2)}
+                    </Typography>
+                    <Typography style={{ marginLeft: '20px' }} variant='subtitle1' component='span'>
+                        Total Liabilities: ${this.props.records.liability_total.toFixed(2)}
+                    </Typography>
+                </div>
+            </div>
         )
     }
 }

@@ -4,6 +4,9 @@ import React from 'react';
 
 
 const useStyles = makeStyles(theme => ({
+    root: {
+        margin: '40px 0',
+    },
     positive: {
         color: 'green',
     },
@@ -23,10 +26,10 @@ export default function NetWorth({ isLoading, netWorth }) {
     }
 
     return (
-        <>
+        <div className={classes.root}>
             <Typography variant='h2' >
                 Net Worth: <span className={netWorth >= 0 ? classes.positive : classes.negative}>${netWorth.toFixed(2)} </span>
             </Typography>
-        </>
+        </div>
     )
 }
