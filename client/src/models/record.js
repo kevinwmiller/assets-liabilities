@@ -4,7 +4,7 @@ const record = {
     state: {
         isLoading: false,
         error: null,
-        records: []
+        records: {}
     }, // initial state
     reducers: {
         setIsLoading(state, payload) {
@@ -34,16 +34,33 @@ const record = {
         // handle state changes with impure functions.
         // use async/await for async actions
         fetchRecords: async (payload, rootState) => {
-            console.log("Fetching records")
-            let res = await axios.get("/finances/records");
-            console.log(res)
-            dispatch.record.setRecords(res.data);
+            dispatch.record.setIsLoading(true);
+            try {
+                let res = await axios.get("/finances/records");
+                console.log(res)
+                dispatch.record.setRecords(res.data);
+            } catch (e) {
+                console.log(e)
+                dispatch.record.setError(e);
+            }
         },
         createRecord: async (payload, rootState) => {
-        },
-        updateRecord: async (payload, rootState) => {
+            try {
+                let res = await axios.post("/finances/records", payload);
+                dispatch.record.fetchRecords()
+            } catch (e) {
+                console.log(e)
+                dispatch.record.setError(e);
+            }
         },
         deleteRecord: async (payload, rootState) => {
+            try {
+                await axios.delete(`/finances/records/${payload.id}`);
+                dispatch.record.fetchRecords()
+            } catch (e) {
+                console.log(e)
+                dispatch.record.setError(e);
+            }
         },
     })
 }
