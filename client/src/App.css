@@ -19,6 +19,8 @@ body {
 
 .mainContent {
   width: 75%;
+  min-width: 375px;
+  margin: auto;
   /* display: flex;
   align-content: center;
   align-items: center; */
