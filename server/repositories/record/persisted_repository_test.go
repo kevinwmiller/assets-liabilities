@@ -18,7 +18,7 @@ import (
 func initDB(t *testing.T) *gorm.DB {
 	db, err := gorm.Open("sqlite3", ":memory:")
 	require.Nil(t, err)
-	db.AutoMigrate(&entities.User{}, &entities.Record{})
+	db.AutoMigrate(&entities.Record{})
 	return db
 }
 
@@ -73,7 +73,7 @@ func TestPersistedRepository_FindByID(t *testing.T) {
 			},
 			args: args{
 				ctx: ctx,
-				id:  23132131,
+				id:  "23132131",
 			},
 			want:    entities.Record{},
 			wantErr: true,
@@ -85,7 +85,7 @@ func TestPersistedRepository_FindByID(t *testing.T) {
 			},
 			args: args{
 				ctx: ctx,
-				id:  12,
+				id:  "dfdsf",
 			},
 			want:    entities.Record{},
 			wantErr: true,

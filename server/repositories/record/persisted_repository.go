@@ -31,7 +31,7 @@ func (r *PersistedRepository) FindByID(ctx context.Context, id string) (entities
 	result := r.db.Where("id = ?", id).Find(&record)
 	if result.Error != nil {
 		if result.Error.Error() == "record not found" {
-			return record, errors.NewErrorWithCode(http.StatusNotFound, fmt.Sprintf("No record found with id %d", id))
+			return record, errors.NewErrorWithCode(http.StatusNotFound, fmt.Sprintf("No record found with id %s", id))
 		}
 		return record, result.Error
 	}
