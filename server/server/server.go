@@ -40,6 +40,10 @@ func New(ctx context.Context) *Server {
 	s.router.Use(m.Logging(ctx))
 	s.router.Use(handlers.CORS())
 
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
+	originsOk := handlers.AllowedOrigins([]string{config.Config(ctx).AllowableOrigin})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+
 	// Configure routes
 	// Not adding auth routes here
 	// s.bindRouter(ctx, &auth.Router{})
@@ -48,7 +52,7 @@ func New(ctx context.Context) *Server {
 	cfg := config.Config(ctx)
 
 	s.server = &http.Server{
-		Handler:      s.router,
+		Handler:      handlers.CORS(originsOk, headersOk, methodsOk)(s.router),
 		Addr:         fmt.Sprintf("%s:%d", cfg.Address, cfg.Port),
 		WriteTimeout: cfg.WriteTimeoutInSeconds,
 		ReadTimeout:  cfg.ReadTimeoutInSeconds,

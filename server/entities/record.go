@@ -31,9 +31,9 @@ func ConvStrToRecordType(str string) (RecordType, error) {
 // Record represents a financial record either an asset or a liability.
 type Record struct {
 	Entity
-	Type    RecordType
-	Name    string
-	Balance float64
+	Type    RecordType `json:"type"`
+	Name    string     `json:"name"`
+	Balance float64    `json:"balance"`
 }
 
 // RecordSearchParams contains the fields available for searching for financial records
