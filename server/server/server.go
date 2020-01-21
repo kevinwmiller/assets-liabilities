@@ -24,7 +24,7 @@ func (s *Server) bindRouter(ctx context.Context, r routes.Router) {
 	// Each route can have multiple handlers associated with if the route supports multiple methods
 	for route, methodHandlers := range r.List() {
 		for method, handler := range methodHandlers {
-			s.router.HandleFunc(route, handler).Methods(method)
+			s.router.HandleFunc(route, handler).Methods(method, "OPTIONS")
 		}
 	}
 }
@@ -40,9 +40,9 @@ func New(ctx context.Context) *Server {
 	s.router.Use(m.Logging(ctx))
 	s.router.Use(handlers.CORS())
 
-	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	originsOk := handlers.AllowedOrigins([]string{config.Config(ctx).AllowableOrigin})
-	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"})
 
 	// Configure routes
 	// Not adding auth routes here
