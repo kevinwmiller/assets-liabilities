@@ -56,7 +56,8 @@ func LoadConfig(path string, configFileName string) *Configuration {
 	config.SetDefault("APP_NAME", "AssetsLiabilities")
 	config.SetDefault("MODE", DefaultMode)
 	config.SetDefault("DOMAIN", "https://kwmassetsliabilities.com")
-	config.SetDefault("ALLOWABLE_ORIGIN", "kwmassetsliabilities.com")
+	// Don't want to worry about CORS right now
+	config.SetDefault("ALLOWABLE_ORIGIN", "*")
 
 	config.SetDefault("ADDRESS", "127.0.0.1")
 	config.SetDefault("PORT", "8080")
